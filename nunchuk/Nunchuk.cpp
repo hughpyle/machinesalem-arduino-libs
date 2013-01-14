@@ -86,7 +86,7 @@ uint8_t Nunchuk::read()
   
   // Request to read the new data
   Wire.requestFrom( NUNCHUK_TWI_DEVICE_ADDRESS, NUNCHUK_TWI_BUFFER_SIZE );
-  //delayMicroseconds( NUNCHUK_TWI_DELAY_MICROSEC );
+  delayMicroseconds( NUNCHUK_TWI_DELAY_MICROSEC );
   
   // Read the new data
   if( NUNCHUK_TWI_BUFFER_SIZE==Wire.available() )

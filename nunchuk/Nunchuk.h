@@ -8,12 +8,12 @@
   To use:
   - Your sketch will need to #include <Wire.h> before you #include <Nunchuk.h>
   - Wiring:
-      - GREEN data (SDA) pin to A4 (on Twwnsy this is pin 6 "D1")
-      - YELLOW clock (SCK) pin to A5 (on Teensy this is pin 5 "D0")
+      - GREEN data (SDA) pin to A4 (on Teensy 2.0 this is pin 6 "D1") (Teensy 3.0 pin 18 "A4")
+      - YELLOW clock (SCK) pin to A5 (on Teensy 2.0 this is pin 5 "D0") (Teensy 3.0 pin 19 "A5")
       - RED power pin to 3.3v
       - WHITE ground pin to arduino ground
   - Call read(), check whether it isOk(), then use the current results.
-  
+
   2012-07-27 @machinesalem,  (cc) https://creativecommons.org/licenses/by/3.0/
 */
 
