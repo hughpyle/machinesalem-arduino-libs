@@ -8,7 +8,9 @@
  * Physical connections:
  *      WM8731 "SDIN" (Proto board "SDA") to    SDA -- Teensy 3.0 pin 18 (A4)
  *      WM8731 "SCLK" (Proto board "SCL") to    SCL -- Teensy 3.0 pin 19 (A5)
- * NOTE: Teensy3.0 requires pullup resistors on these two pins -- 2.2k each, from pin to 3.3V.
+ * NOTE: Teensy3.0 requires pullup resistors on these two pins -- e.g. 10k each, from pin to 3.3V.
+ *
+ * 2013-01-14 @machinesalem,  (cc) https://creativecommons.org/licenses/by/3.0/
  */
 
 #include "Wire.h"
@@ -17,20 +19,22 @@
 static unsigned char WM8731_initialized=0;
 static unsigned char WM8731_device_address=WM8731_DEVICE_ADDRESS_CSB_LOW;
 
-void WM8731_class::init( WM8731_csb device_address, unsigned int sample_rate_hz, unsigned char word_length_bits, WM8731_interface_format interface_format )
+void WM8731_class::begin( WM8731_csb device_address, unsigned int sample_rate_hz, unsigned char word_length_bits, WM8731_interface_format interface_format )
 {
     WM8731_device_address = device_address;
     if( !WM8731_initialized )
     {
-        Wire.begin( WM8731_device_address );
         WM8731_initialized = 1;
+        Wire.begin();
+        delay(200);
     }
     
+    // Reset the codec
+    reset();
+       
     // Power on
     set( WM8731_POWERDOWN, 0 );
-    
-    reset();
-    
+
     // Set the digital data format
     unsigned char iwl = 0;
     if( word_length_bits==20 ) iwl = 1;
@@ -39,8 +43,8 @@ void WM8731_class::init( WM8731_csb device_address, unsigned int sample_rate_hz,
     set( WM8731_INTERFACE, WM8731_INTERFACE_FORMAT(interface_format) | WM8731_INTERFACE_IWL(iwl) );
     
     // Default volumes are all off
-    set( WM8731_LLINEIN, WM8731_LLINEIN_LINVOL(0) );
-    set( WM8731_RLINEIN, WM8731_RLINEIN_RINVOL(0) );
+    set( WM8731_LLINEIN,  WM8731_LLINEIN_LINVOL(0) );
+    set( WM8731_RLINEIN,  WM8731_RLINEIN_RINVOL(0) );
     set( WM8731_LHEADOUT, WM8731_LHEADOUT_LHPVOL(0) );
     set( WM8731_RHEADOUT, WM8731_RHEADOUT_RHPVOL(0) );
     set( WM8731_ANALOG, WM8731_ANALOG_DACSEL );
@@ -52,19 +56,19 @@ void WM8731_class::init( WM8731_csb device_address, unsigned int sample_rate_hz,
     else if( sample_rate_hz==32000 )  rate = 0x06;
     else if( sample_rate_hz==96000 )  rate = 0x07;
     set( WM8731_SAMPLING, WM8731_SAMPLING_SR(rate) );
-    
-    set( 0x10, 0xa0 );
+
+    //set( 0x10, 0xa0 );
 }
 
 void WM8731_class::reset()
 {
     set( WM8731_RESET, 0 );
-}
+}               
 
 void WM8731_class::setActive()
 {
     set( WM8731_CONTROL, WM8731_CONTROL_ACTIVE );
-    set( 0x12, 1 );
+    //set( 0x12, 1 );
 }
 
 void WM8731_class::setInactive()
@@ -84,20 +88,26 @@ void WM8731_class::setInputVolume( unsigned char value )
 void WM8731_class::setOutputVolume( unsigned char value )
 {
     unsigned char reg;
-    reg = ( WM8731.get(WM8731_LHEADOUT) & WM8731_LHEADOUT_LHPVOL_MASK ) | WM8731_LHEADOUT_LHPVOL(value);
+    reg = ( WM8731.get(WM8731_LHEADOUT) & WM8731_LHEADOUT_LHPVOL_MASK ) | WM8731_LHEADOUT_LHPVOL(value) /* | WM8731_LHEADOUT_LZCEN */;
     set( WM8731_LHEADOUT, reg );
-    reg = ( WM8731.get(WM8731_RHEADOUT) & WM8731_RHEADOUT_RHPVOL_MASK ) | WM8731_RHEADOUT_RHPVOL(value);
+    reg = ( WM8731.get(WM8731_RHEADOUT) & WM8731_RHEADOUT_RHPVOL_MASK ) | WM8731_RHEADOUT_RHPVOL(value) /* | WM8731_LHEADOUT_RZCEN */;
     set( WM8731_RHEADOUT, reg );
 }
 
-void WM8731_class::set( unsigned char reg, unsigned char value )
+void WM8731_class::set( unsigned char reg, unsigned short value )
 {
     if( reg < WM8731_NREGISTERS )
         WM8731_registers[reg] = value;
         
+#ifdef WM8731_DEBUG
+    Serial.print( reg, HEX );
+    Serial.print( "=" );
+    Serial.println( value, HEX );
+#endif
+
     Wire.beginTransmission(WM8731_device_address);
-    Wire.send(reg);
-    Wire.send(value);
+    Wire.send( (unsigned char)((reg<<1) | ((value>>8) & 0x1)) );
+    Wire.send( (unsigned char)(value & 0xFF) );
     Wire.endTransmission();
 }
 

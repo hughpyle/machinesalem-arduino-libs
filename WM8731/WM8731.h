@@ -3,7 +3,9 @@
  *
  * NOTE: This library only controls the codec operation.  It doesn't have a data interface!  You need to do that yourself (e.g. with I2S).
  *
- * Requires the Wire library
+ * Requires the Wire library.
+ *
+ * 2013-01-14 @machinesalem,  (cc) https://creativecommons.org/licenses/by/3.0/
  */
 
 #ifndef __WM8731_H__
@@ -39,13 +41,13 @@ typedef enum {
 
 #define WM8731_LLINEIN_LINVOL(n)    ((unsigned char)(n & 0x1f))       // Left channel line-input volume (0..31)
 #define WM8731_LLINEIN_LINVOL_MASK  ((unsigned char)(0xe0))
-#define WM8731_LLINEIN_LINMUTE      ((unsigned char)0x40)             // Left line input mute to ADC
-#define WM8731_LLINEIN_LRINBOTH     ((unsigned char)0x80)             // Left to Right Mic Control Join
+#define WM8731_LLINEIN_LINMUTE      ((unsigned char)0x80)             // Left line input mute to ADC
+#define WM8731_LLINEIN_LRINBOTH     ((unsigned short)0x100)           // Left to Right Mic Control Join
 
 #define WM8731_RLINEIN_RINVOL(n)    ((unsigned char)(n & 0x1f))       // Right channel line-input volume (0..31)
 #define WM8731_RLINEIN_RINVOL_MASK  ((unsigned char)(0xe0))
-#define WM8731_RLINEIN_RINMUTE      ((unsigned char)0x40)             // Right line input mute to ADC
-#define WM8731_RLINEIN_RLINBOTH     ((unsigned char)0x80)             // Right to Left Mic Control Join
+#define WM8731_RLINEIN_RINMUTE      ((unsigned char)0x80)             // Right line input mute to ADC
+#define WM8731_RLINEIN_RLINBOTH     ((unsigned short)0x100)           // Right to Left Mic Control Join
 
 #define WM8731_ANALOG_MICBOOST      ((unsigned char)0x01)             // Mic Input Level Boost
 #define WM8731_ANALOG_MUTEMIC       ((unsigned char)0x02)             // Mic Input Mute to ADC
@@ -60,15 +62,15 @@ typedef enum {
 #define WM8731_DIGITAL_DEEMP(n)     ((unsigned char)(n & 3)<<1)       // De-Emph: 0=disable, 1=32kHz, 2=44k1, 3=48k
 #define WM8731_DIGITAL_DACMU        ((unsigned char)0x08)             // DAC Soft Mute (digital)
 
-#define WM8731_LHEADOUT_LHPVOL(n)   ((unsigned char)(n & 0x3f))       // Left Headphone Output Volume (0..63)
+#define WM8731_LHEADOUT_LHPVOL(n)   ((unsigned char)(n & 0x3f))       // Left Headphone Output Volume (0..127)
 #define WM8731_LHEADOUT_LHPVOL_MASK ((unsigned char)(0xc0))
-#define WM8731_LHEADOUT_LZCEN       ((unsigned char)0x40)             // Left Channel Zero Cross Detect
-#define WM8731_LHEADOUT_LRHPBOTH    ((unsigned char)0x80)             // Left to Right Headphone Control Join
+#define WM8731_LHEADOUT_LZCEN       ((unsigned char)0x80)             // Left Channel Zero Cross Detect
+#define WM8731_LHEADOUT_LRHPBOTH    ((unsigned short)0x100)           // Left to Right Headphone Control Join
 
-#define WM8731_RHEADOUT_RHPVOL(n)   ((unsigned char)(n & 0x3f))       // Right Headphone Output Volume (0..63)
+#define WM8731_RHEADOUT_RHPVOL(n)   ((unsigned char)(n & 0x3f))       // Right Headphone Output Volume (0..127)
 #define WM8731_RHEADOUT_RHPVOL_MASK ((unsigned char)(0xc0))
-#define WM8731_RHEADOUT_RZCEN       ((unsigned char)0x40)             // Right Channel Zero Cross Detect
-#define WM8731_RHEADOUT_RLHPBOTH    ((unsigned char)0x80)             // Right to Left Headphone Control Join
+#define WM8731_RHEADOUT_RZCEN       ((unsigned char)0x80)             // Right Channel Zero Cross Detect
+#define WM8731_RHEADOUT_RLHPBOTH    ((unsigned short)0x100)           // Right to Left Headphone Control Join
 
 #define WM8731_INTERFACE_FORMAT(n)  ((unsigned char)(n & 3))          // Format: 0=MSB-first RJ, 1=MSB-first LJ, 2=I2S, 3=DSP
 #define WM8731_INTERFACE_IWL(n)     ((unsigned char)(n & 3)<<2)       // Word Length: 0=16 1=20 2=24 3=32
@@ -90,22 +92,24 @@ typedef enum {
 #define WM8731_SAMPLING_CLKIDIV2    ((unsigned char)0x20)             // Core Clock Divider Select (0=MCLK, 1=MCLK/2)
 #define WM8731_SAMPLING_CLKODIV2    ((unsigned char)0x40)             // CLKOUT Divider Select (0=MCLK, 1=MCLK/2)
 
-#define WM8731_CONTROL_ACTIVE        ((unsigned char)1)
+#define WM8731_CONTROL_ACTIVE       ((unsigned char)1)
 
+
+#define WM8731_DEBUG 1
 #define WM8731_NREGISTERS 10
-static unsigned char WM8731_registers[WM8731_NREGISTERS];
+static unsigned short WM8731_registers[WM8731_NREGISTERS];
 
 class WM8731_class
 {
 public:
-    static void init( WM8731_csb device_address, unsigned int sample_rate_hz, unsigned char word_length_bits, WM8731_interface_format interface_format );
+    static void begin( WM8731_csb device_address, unsigned int sample_rate_hz, unsigned char word_length_bits, WM8731_interface_format interface_format );
     static void reset();
     static void setActive();
     static void setInactive();
     static void setInputVolume( unsigned char value ); /* 0 to 63 */
     static void setOutputVolume( unsigned char value ); /* 0 to 31 */
-    static void set( unsigned char reg, unsigned char value );
-    static inline unsigned char get( unsigned char reg ) { return WM8731_registers[reg]; };
+    static void set( unsigned char reg, unsigned short value );
+    static inline unsigned short get( unsigned char reg ) { return WM8731_registers[reg]; };
 };
 
 extern WM8731_class WM8731;
