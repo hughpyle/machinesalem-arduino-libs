@@ -12,6 +12,7 @@
       - YELLOW clock (SCK) pin to A5 (on Teensy 2.0 this is pin 5 "D0") (Teensy 3.0 pin 19 "A5")
       - RED power pin to 3.3v
       - WHITE ground pin to arduino ground
+      **NOTE** Teensy 3.0 requires pullup resistors (e.g. 10k) from the SDA and SCK pins to +3.3v.
   - Call read(), check whether it isOk(), then use the current results.
 
   2012-07-27 @machinesalem,  (cc) https://creativecommons.org/licenses/by/3.0/
