@@ -17,6 +17,7 @@
     Data and clock use hardware SPI connections.
       For "classic" Arduinos (Uno, Duemilanove, etc.), data = pin 11, clock = pin 13
       For Teensy 2.0, data = B2 (#2), clock = B1 (#1)
+      For Teensy 3.0, data = 11 (DOUT), clock = 13 (SCK)
     
   2012-09-29 @machinesalem,  (cc) https://creativecommons.org/licenses/by/3.0/
 */
@@ -53,8 +54,11 @@ class TLV5618
 
     void begin();
     
-    // Direct write method
+    // Direct write methods
+    void select( int b );
+    inline void write_data_no_cs( uint8_t cmd, uint16_t value ) { SPI.transfer( ((value & 0xF00)>>8) | cmd | _control ); SPI.transfer(   value & 0xFF ); };
     void write_data( uint8_t cmd, uint16_t value );
+    void write_fast( uint8_t cmd, uint16_t value );
     
     // Convenience write both channels
     void write( uint16_t valueA, uint16_t valueB );
