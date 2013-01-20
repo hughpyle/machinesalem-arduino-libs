@@ -113,7 +113,7 @@ typedef enum {
 /* ---- */
 
  
-#define WM8731_DEBUG 0
+// #define WM8731_DEBUG
 #define WM8731_NREGISTERS 10
 static unsigned short WM8731_registers[WM8731_NREGISTERS];
 
