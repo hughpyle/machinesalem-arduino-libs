@@ -40,12 +40,12 @@ typedef enum {
 /* ----- Flags ----- */
 
 #define WM8731_LLINEIN_LINVOL(n)    ((unsigned char)(n & 0x1f))       // Left channel line-input volume (0..31)
-#define WM8731_LLINEIN_LINVOL_MASK  ((unsigned char)(0xe0))
+#define WM8731_LLINEIN_LINVOL_MASK  ((unsigned char)0xe0)
 #define WM8731_LLINEIN_LINMUTE      ((unsigned char)0x80)             // Left line input mute to ADC
 #define WM8731_LLINEIN_LRINBOTH     ((unsigned short)0x100)           // Left to Right Mic Control Join
 
 #define WM8731_RLINEIN_RINVOL(n)    ((unsigned char)(n & 0x1f))       // Right channel line-input volume (0..31)
-#define WM8731_RLINEIN_RINVOL_MASK  ((unsigned char)(0xe0))
+#define WM8731_RLINEIN_RINVOL_MASK  ((unsigned char)0xe0)
 #define WM8731_RLINEIN_RINMUTE      ((unsigned char)0x80)             // Right line input mute to ADC
 #define WM8731_RLINEIN_RLINBOTH     ((unsigned short)0x100)           // Right to Left Mic Control Join
 
@@ -63,21 +63,21 @@ typedef enum {
 #define WM8731_DIGITAL_DACMU        ((unsigned char)0x08)             // DAC Soft Mute (digital)
 
 #define WM8731_LHEADOUT_LHPVOL(n)   ((unsigned char)(n & 0x3f))       // Left Headphone Output Volume (0..127)
-#define WM8731_LHEADOUT_LHPVOL_MASK ((unsigned char)(0xc0))
+#define WM8731_LHEADOUT_LHPVOL_MASK ((unsigned char)0xc0)
 #define WM8731_LHEADOUT_LZCEN       ((unsigned char)0x80)             // Left Channel Zero Cross Detect
 #define WM8731_LHEADOUT_LRHPBOTH    ((unsigned short)0x100)           // Left to Right Headphone Control Join
 
 #define WM8731_RHEADOUT_RHPVOL(n)   ((unsigned char)(n & 0x3f))       // Right Headphone Output Volume (0..127)
-#define WM8731_RHEADOUT_RHPVOL_MASK ((unsigned char)(0xc0))
+#define WM8731_RHEADOUT_RHPVOL_MASK ((unsigned char)0xc0)
 #define WM8731_RHEADOUT_RZCEN       ((unsigned char)0x80)             // Right Channel Zero Cross Detect
 #define WM8731_RHEADOUT_RLHPBOTH    ((unsigned short)0x100)           // Right to Left Headphone Control Join
 
 #define WM8731_INTERFACE_FORMAT(n)  ((unsigned char)(n & 3))          // Format: 0=MSB-first RJ, 1=MSB-first LJ, 2=I2S, 3=DSP
-#define WM8731_INTERFACE_IWL(n)     ((unsigned char)(n & 3)<<2)       // Word Length: 0=16 1=20 2=24 3=32
-#define WM8731_INTERFACE_LRP        ((unsigned char)(0x10)            // DACLRC phase control
-#define WM8731_INTERFACE_LRSWAP     ((unsigned char)(0x20)            // DAC Left Right Clock Swap
-#define WM8731_INTERFACE_MS         ((unsigned char)(0x40)            // Master/Slave Mode (1=master)
-#define WM8731_INTERFACE_MCLKINV    ((unsigned char)(0x80)            // Bit Clock Invert
+#define WM8731_INTERFACE_WORDLEN(n) ((unsigned char)(n & 3)<<2)       // Word Length: 0=16 1=20 2=24 3=32
+#define WM8731_INTERFACE_LRP        ((unsigned char)0x10)            // DACLRC phase control
+#define WM8731_INTERFACE_LRSWAP     ((unsigned char)0x20)            // DAC Left Right Clock Swap
+#define WM8731_INTERFACE_MASTER     ((unsigned char)0x40)            // Master/Slave Mode (1=master)
+#define WM8731_INTERFACE_MCLKINV    ((unsigned char)0x80)            // Bit Clock Invert
 
 typedef enum {
       right_justified = 0,
@@ -86,15 +86,33 @@ typedef enum {
       DSP = 3
     } WM8731_interface_format;
 
+typedef enum {
+      bits16 = 0,
+      bits20 = 1,
+      bits24 = 2,
+      bits32 = 3
+    } WM8731_interface_wordlength;
+
+typedef enum {
+      hz48000 = 0,
+      hz8000 = 3,
+      hz32000 = 6,
+      hz96000 = 7
+    } WM8731_sampling_rate;
+    
 #define WM8731_SAMPLING_USBMODE     ((unsigned char)0x01)             // USB Mode Select
 #define WM8731_SAMPLING_BOSR        ((unsigned char)0x02)             // Base OverSampling Rate
-#define WM8731_SAMPLING_SR(n)       ((unsigned char)(n & 0x0f)<<2)    // Sample Rate
+#define WM8731_SAMPLING_RATE(n)     ((unsigned char)(n & 0x0f)<<2)    // Sample Rate
 #define WM8731_SAMPLING_CLKIDIV2    ((unsigned char)0x20)             // Core Clock Divider Select (0=MCLK, 1=MCLK/2)
 #define WM8731_SAMPLING_CLKODIV2    ((unsigned char)0x40)             // CLKOUT Divider Select (0=MCLK, 1=MCLK/2)
 
 #define WM8731_CONTROL_ACTIVE       ((unsigned char)1)
 
 
+
+/* ---- */
+
+ 
 #define WM8731_DEBUG 1
 #define WM8731_NREGISTERS 10
 static unsigned short WM8731_registers[WM8731_NREGISTERS];
@@ -102,7 +120,7 @@ static unsigned short WM8731_registers[WM8731_NREGISTERS];
 class WM8731_class
 {
 public:
-    static void begin( WM8731_csb device_address, unsigned int sample_rate_hz, unsigned char word_length_bits, WM8731_interface_format interface_format );
+    static void begin( WM8731_csb device_address, unsigned char sampling_flags, unsigned char interface_flags );
     static void reset();
     static void setActive();
     static void setInactive();

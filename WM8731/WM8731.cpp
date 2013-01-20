@@ -13,13 +13,27 @@
  * 2013-01-14 @machinesalem,  (cc) https://creativecommons.org/licenses/by/3.0/
  */
 
+
+/*
+ * Pins for the Mikro proto board
+ *  SCK  = bit-clock (out when master)
+ *  DACL = word-clock for DAC (out when master)
+ *  ADCL = word-clock for ADC (out when master)
+ *  MOSI = data for DAC
+ *  MISO = data for ADC
+ *  SDA  = I2C control data
+ *  SCK  = I2C control clock
+ */
+
 #include "Wire.h"
 #include "WM8731.h"
 
 static unsigned char WM8731_initialized=0;
 static unsigned char WM8731_device_address=WM8731_DEVICE_ADDRESS_CSB_LOW;
 
-void WM8731_class::begin( WM8731_csb device_address, unsigned int sample_rate_hz, unsigned char word_length_bits, WM8731_interface_format interface_format )
+// Caller example
+
+void WM8731_class::begin( WM8731_csb device_address, unsigned char sampling_flags, unsigned char interface_flags )
 {
     WM8731_device_address = device_address;
     if( !WM8731_initialized )
@@ -36,11 +50,7 @@ void WM8731_class::begin( WM8731_csb device_address, unsigned int sample_rate_hz
     set( WM8731_POWERDOWN, 0 );
 
     // Set the digital data format
-    unsigned char iwl = 0;
-    if( word_length_bits==20 ) iwl = 1;
-    else if( word_length_bits==24 ) iwl = 2;
-    else if( word_length_bits==32 ) iwl = 3;
-    set( WM8731_INTERFACE, WM8731_INTERFACE_FORMAT(interface_format) | WM8731_INTERFACE_IWL(iwl) );
+    set( WM8731_INTERFACE, interface_flags );
     
     // Default volumes are all off
     set( WM8731_LLINEIN,  WM8731_LLINEIN_LINVOL(0) );
@@ -50,12 +60,7 @@ void WM8731_class::begin( WM8731_csb device_address, unsigned int sample_rate_hz
     set( WM8731_ANALOG, WM8731_ANALOG_DACSEL );
     set( WM8731_DIGITAL, 0 );
     
-    // Default rate is 48k.  Assume a 12MHz mclk.
-    unsigned char rate = 0x00;
-    if( sample_rate_hz==8000 )         rate = 0x03;
-    else if( sample_rate_hz==32000 )  rate = 0x06;
-    else if( sample_rate_hz==96000 )  rate = 0x07;
-    set( WM8731_SAMPLING, WM8731_SAMPLING_SR(rate) );
+    set( WM8731_SAMPLING, sampling_flags );
 
     //set( 0x10, 0xa0 );
 }
