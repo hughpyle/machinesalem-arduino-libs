@@ -74,10 +74,10 @@ typedef enum {
 
 #define WM8731_INTERFACE_FORMAT(n)  ((unsigned char)(n & 3))          // Format: 0=MSB-first RJ, 1=MSB-first LJ, 2=I2S, 3=DSP
 #define WM8731_INTERFACE_WORDLEN(n) ((unsigned char)(n & 3)<<2)       // Word Length: 0=16 1=20 2=24 3=32
-#define WM8731_INTERFACE_LRP        ((unsigned char)0x10)            // DACLRC phase control
-#define WM8731_INTERFACE_LRSWAP     ((unsigned char)0x20)            // DAC Left Right Clock Swap
-#define WM8731_INTERFACE_MASTER     ((unsigned char)0x40)            // Master/Slave Mode (1=master)
-#define WM8731_INTERFACE_MCLKINV    ((unsigned char)0x80)            // Bit Clock Invert
+#define WM8731_INTERFACE_LRP        ((unsigned char)0x10)             // DACLRC phase control
+#define WM8731_INTERFACE_LRSWAP     ((unsigned char)0x20)             // DAC Left Right Clock Swap
+#define WM8731_INTERFACE_MASTER     ((unsigned char)0x40)             // Master/Slave Mode (1=master)
+#define WM8731_INTERFACE_MCLKINV    ((unsigned char)0x80)             // Bit Clock Invert
 
 typedef enum {
       right_justified = 0,
@@ -113,7 +113,7 @@ typedef enum {
 /* ---- */
 
  
-#define WM8731_DEBUG 1
+#define WM8731_DEBUG 0
 #define WM8731_NREGISTERS 10
 static unsigned short WM8731_registers[WM8731_NREGISTERS];
 

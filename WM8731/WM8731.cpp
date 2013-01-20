@@ -31,8 +31,13 @@
 static unsigned char WM8731_initialized=0;
 static unsigned char WM8731_device_address=WM8731_DEVICE_ADDRESS_CSB_LOW;
 
-// Caller example
-
+/*
+ * @brief Initialize the WM8731 codec.
+ * @param[in]   device_address    Either "low" (hex 1A) or "high" (hex 1B), depending whether the CSB pin is wired low or high.
+ * @param[in]   sampling_flags    Combination of flags to define the sample rate etc.  For example WM8731_SAMPLING_RATE(hz48000)
+ * @param[in]   interface_flags   Combination of flags to define the data interface.  For example WM8731_INTERFACE_FORMAT(I2S) | WM8731_INTERFACE_MASTER
+ * @return none.
+ */
 void WM8731_class::begin( WM8731_csb device_address, unsigned char sampling_flags, unsigned char interface_flags )
 {
     WM8731_device_address = device_address;
@@ -65,22 +70,39 @@ void WM8731_class::begin( WM8731_csb device_address, unsigned char sampling_flag
     //set( 0x10, 0xa0 );
 }
 
+/*
+ * @brief Reset the codec.  (This is done automatically on 'begin')
+ * @return none.
+ */
 void WM8731_class::reset()
 {
     set( WM8731_RESET, 0 );
 }               
 
+/*
+ * @brief Makes the codec active.  (This is NOT done automatically on 'begin').
+ * @return none.
+ */
 void WM8731_class::setActive()
 {
     set( WM8731_CONTROL, WM8731_CONTROL_ACTIVE );
     //set( 0x12, 1 );
 }
 
+/*
+ * @brief Makes the codec inactive.  (Its functions are powered on still).
+ * @return none.
+ */
 void WM8731_class::setInactive()
 {
     set( WM8731_CONTROL, 0 );
 }
 
+/*
+ * @brief Sets the input gain on both line-input channels.
+ * @param[in]   value       Volume, 0 to 31
+ * @return none.
+ */
 void WM8731_class::setInputVolume( unsigned char value )
 {
     unsigned char reg;
@@ -90,6 +112,11 @@ void WM8731_class::setInputVolume( unsigned char value )
     set( WM8731_RLINEIN, reg );
 }
 
+/*
+ * @brief Sets the output volume both channels.
+ * @param[in]   value       Volume, 0 to 127
+ * @return none.
+ */
 void WM8731_class::setOutputVolume( unsigned char value )
 {
     unsigned char reg;
@@ -99,6 +126,12 @@ void WM8731_class::setOutputVolume( unsigned char value )
     set( WM8731_RHEADOUT, reg );
 }
 
+/*
+ * @brief Sets any parameter.
+ * @param[in]   reg         The register
+ * @param[in]   value       The value to write into the register
+ * @return none.
+ */
 void WM8731_class::set( unsigned char reg, unsigned short value )
 {
     if( reg < WM8731_NREGISTERS )
