@@ -13,7 +13,14 @@ void setup()
   delay(2000);
   Serial.println( "Initializing" );
   delay(2000);
-  WM8731.begin( low, 48000, 16, I2S );
+  
+  // Define the data interface format
+  unsigned char interface = WM8731_INTERFACE_FORMAT(I2S) | WM8731_INTERFACE_WORDLEN(bits16);
+  // Is the codec behaving as "master" (driving the clocks)?  Usually that would be the best thing.
+  interface |= WM8731_INTERFACE_MASTER;
+  // Initialize the codec at 48kHz
+  WM8731.begin( low, WM8731_SAMPLING_RATE(hz48000), interface );
+
   Serial.println( "Initialized" );
 }
 
