@@ -30,7 +30,7 @@ typedef enum {
 #define WM8731_LHEADOUT             ((unsigned char)0x02)
 #define WM8731_RHEADOUT             ((unsigned char)0x03)
 #define WM8731_ANALOG               ((unsigned char)0x04)
-#define WM8731_DIGITAL              ((unsigned char)0x0a)
+#define WM8731_DIGITAL              ((unsigned char)0x05)
 #define WM8731_POWERDOWN            ((unsigned char)0x06)
 #define WM8731_INTERFACE            ((unsigned char)0x07)
 #define WM8731_SAMPLING             ((unsigned char)0x08)
@@ -49,19 +49,6 @@ typedef enum {
 #define WM8731_RLINEIN_RINMUTE      ((unsigned char)0x80)             // Right line input mute to ADC
 #define WM8731_RLINEIN_RLINBOTH     ((unsigned short)0x100)           // Right to Left Mic Control Join
 
-#define WM8731_ANALOG_MICBOOST      ((unsigned char)0x01)             // Mic Input Level Boost
-#define WM8731_ANALOG_MUTEMIC       ((unsigned char)0x02)             // Mic Input Mute to ADC
-#define WM8731_ANALOG_INSEL         ((unsigned char)0x04)             // Mic Input Select to ADC (zero: select Line input to ADC)
-#define WM8731_ANALOG_BYPASS        ((unsigned char)0x08)             // Bypass (line inputs summed to line out)
-#define WM8731_ANALOG_DACSEL        ((unsigned char)0x10)             // DAC select (only send DAC output to line out)
-#define WM8731_ANALOG_SIDETONE      ((unsigned char)0x20)             // Sidetone (mic inputs summed to line out)
-#define WM8731_ANALOG_SIDEATT(n)    ((unsigned char)(n & 3)<<6)       // Sidetone Attenuation 0=-6dB, 1=-9dB, 2=-12dB, 3=-15dB
-
-#define WM8731_DIGITAL_ADCHPD       ((unsigned char)0x01)             // ADC High Pass Filter Enable
-#define WM8731_DIGITAL_HPOR         ((unsigned char)0x10)             // Store DC offset when High Pass filter disabled
-#define WM8731_DIGITAL_DEEMP(n)     ((unsigned char)(n & 3)<<1)       // De-Emph: 0=disable, 1=32kHz, 2=44k1, 3=48k
-#define WM8731_DIGITAL_DACMU        ((unsigned char)0x08)             // DAC Soft Mute (digital)
-
 #define WM8731_LHEADOUT_LHPVOL(n)   ((unsigned char)(n & 0x3f))       // Left Headphone Output Volume (0..127)
 #define WM8731_LHEADOUT_LHPVOL_MASK ((unsigned char)0xc0)
 #define WM8731_LHEADOUT_LZCEN       ((unsigned char)0x80)             // Left Channel Zero Cross Detect
@@ -72,12 +59,42 @@ typedef enum {
 #define WM8731_RHEADOUT_RZCEN       ((unsigned char)0x80)             // Right Channel Zero Cross Detect
 #define WM8731_RHEADOUT_RLHPBOTH    ((unsigned short)0x100)           // Right to Left Headphone Control Join
 
+#define WM8731_ANALOG_MICBOOST      ((unsigned char)0x01)             // Mic Input Level Boost
+#define WM8731_ANALOG_MUTEMIC       ((unsigned char)0x02)             // Mic Input Mute to ADC
+#define WM8731_ANALOG_INSEL         ((unsigned char)0x04)             // Mic Input Select to ADC (zero: select Line input to ADC)
+#define WM8731_ANALOG_BYPASS        ((unsigned char)0x08)             // Bypass (line inputs summed to line out)
+#define WM8731_ANALOG_DACSEL        ((unsigned char)0x10)             // DAC select (only send DAC output to line out)
+#define WM8731_ANALOG_SIDETONE      ((unsigned char)0x20)             // Sidetone (mic inputs summed to line out)
+#define WM8731_ANALOG_SIDEATT(n)    ((unsigned char)(n & 3)<<6)       // Sidetone Attenuation 0=-6dB, 1=-9dB, 2=-12dB, 3=-15dB
+
+#define WM8731_DIGITAL_ADCHPD       ((unsigned char)0x01)             // ADC High Pass Filter Enable
+#define WM8731_DIGITAL_DEEMP(n)     ((unsigned char)(n & 3)<<1)       // De-Emph: 0=disable, 1=32kHz, 2=44k1, 3=48k
+#define WM8731_DIGITAL_DACMU        ((unsigned char)0x08)             // DAC Soft Mute (digital)
+#define WM8731_DIGITAL_HPOR         ((unsigned char)0x10)             // Store DC offset when High Pass filter disabled
+
+#define WM8731_POWERDOWN_LINEINPD   ((unsigned char)0x01)             // Line Input Power Down
+#define WM8731_POWERDOWN_MICPD      ((unsigned char)0x02)             // Mic Input Power Down
+#define WM8731_POWERDOWN_ADCPD      ((unsigned char)0x04)             // ADC Power Down
+#define WM8731_POWERDOWN_DACPD      ((unsigned char)0x08)             // DAC Power Down
+#define WM8731_POWERDOWN_OUTPD      ((unsigned char)0x10)             // Line Output Power Down
+#define WM8731_POWERDOWN_OSCPD      ((unsigned char)0x20)             // Oscillator Power Down
+#define WM8731_POWERDOWN_CLKOUTPD   ((unsigned char)0x40)             // CLKOUT Power Down
+#define WM8731_POWERDOWN_POWEROFF   ((unsigned char)0x80)             // Power Off Device
+
 #define WM8731_INTERFACE_FORMAT(n)  ((unsigned char)(n & 3))          // Format: 0=MSB-first RJ, 1=MSB-first LJ, 2=I2S, 3=DSP
 #define WM8731_INTERFACE_WORDLEN(n) ((unsigned char)(n & 3)<<2)       // Word Length: 0=16 1=20 2=24 3=32
 #define WM8731_INTERFACE_LRP        ((unsigned char)0x10)             // DACLRC phase control
 #define WM8731_INTERFACE_LRSWAP     ((unsigned char)0x20)             // DAC Left Right Clock Swap
-#define WM8731_INTERFACE_MASTER     ((unsigned char)0x40)             // Master/Slave Mode (1=master)
-#define WM8731_INTERFACE_MCLKINV    ((unsigned char)0x80)             // Bit Clock Invert
+#define WM8731_INTERFACE_MASTER     ((unsigned char)0x40)             // Master/Slave Mode (1: codec is master)
+#define WM8731_INTERFACE_BCLKINV    ((unsigned char)0x80)             // Bit Clock Invert
+
+#define WM8731_SAMPLING_USBMODE     ((unsigned char)0x01)             // USB Mode Select
+#define WM8731_SAMPLING_BOSR        ((unsigned char)0x02)             // Base OverSampling Rate
+#define WM8731_SAMPLING_RATE(n)     ((unsigned char)(n & 0x0f)<<2)    // Sample Rate
+#define WM8731_SAMPLING_CLKIDIV2    ((unsigned char)0x40)             // Core Clock Divider Select (0=MCLK, 1=MCLK/2)
+#define WM8731_SAMPLING_CLKODIV2    ((unsigned char)0x80)             // CLKOUT Divider Select (0=MCLK, 1=MCLK/2)
+
+#define WM8731_CONTROL_ACTIVE       ((unsigned char)1)
 
 typedef enum {
       right_justified = 0,
@@ -98,22 +115,14 @@ typedef enum {
       hz8000 = 3,
       hz32000 = 6,
       hz96000 = 7
-    } WM8731_sampling_rate;
-    
-#define WM8731_SAMPLING_USBMODE     ((unsigned char)0x01)             // USB Mode Select
-#define WM8731_SAMPLING_BOSR        ((unsigned char)0x02)             // Base OverSampling Rate
-#define WM8731_SAMPLING_RATE(n)     ((unsigned char)(n & 0x0f)<<2)    // Sample Rate
-#define WM8731_SAMPLING_CLKIDIV2    ((unsigned char)0x20)             // Core Clock Divider Select (0=MCLK, 1=MCLK/2)
-#define WM8731_SAMPLING_CLKODIV2    ((unsigned char)0x40)             // CLKOUT Divider Select (0=MCLK, 1=MCLK/2)
-
-#define WM8731_CONTROL_ACTIVE       ((unsigned char)1)
+    } WM8731_sampling_rate;    
 
 
 
 /* ---- */
 
  
-// #define WM8731_DEBUG
+#define WM8731_DEBUG
 #define WM8731_NREGISTERS 10
 static unsigned short WM8731_registers[WM8731_NREGISTERS];
 

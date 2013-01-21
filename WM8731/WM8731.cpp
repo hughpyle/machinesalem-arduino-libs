@@ -51,7 +51,7 @@ void WM8731_class::begin( WM8731_csb device_address, unsigned char sampling_flag
     // Reset the codec
     reset();
        
-    // Power on
+    // Power on all modules
     set( WM8731_POWERDOWN, 0 );
 
     // Set the digital data format
@@ -62,7 +62,7 @@ void WM8731_class::begin( WM8731_csb device_address, unsigned char sampling_flag
     set( WM8731_RLINEIN,  WM8731_RLINEIN_RINVOL(0) );
     set( WM8731_LHEADOUT, WM8731_LHEADOUT_LHPVOL(0) );
     set( WM8731_RHEADOUT, WM8731_RHEADOUT_RHPVOL(0) );
-    set( WM8731_ANALOG, WM8731_ANALOG_DACSEL );
+    set( WM8731_ANALOG,   WM8731_ANALOG_DACSEL );
     set( WM8731_DIGITAL, 0 );
     
     set( WM8731_SAMPLING, sampling_flags );
@@ -138,8 +138,9 @@ void WM8731_class::set( unsigned char reg, unsigned short value )
         WM8731_registers[reg] = value;
         
 #ifdef WM8731_DEBUG
+    Serial.print( "WM8731 register 0x" );
     Serial.print( reg, HEX );
-    Serial.print( "=" );
+    Serial.print( " = 0x" );
     Serial.println( value, HEX );
 #endif
 
