@@ -51,9 +51,6 @@ void WM8731_class::begin( WM8731_csb device_address, unsigned char sampling_flag
     // Reset the codec
     reset();
        
-    // Power on all modules
-    set( WM8731_POWERDOWN, 0 );
-
     // Set the digital data format
     set( WM8731_INTERFACE, interface_flags );
     
@@ -66,6 +63,9 @@ void WM8731_class::begin( WM8731_csb device_address, unsigned char sampling_flag
     set( WM8731_DIGITAL, 0 );
     
     set( WM8731_SAMPLING, sampling_flags );
+
+    // Power on all modules
+    set( WM8731_POWERDOWN, 0 );
 
     //set( 0x10, 0xa0 );
 }
