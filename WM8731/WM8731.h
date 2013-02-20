@@ -110,12 +110,16 @@ typedef enum {
       bits32 = 3
     } WM8731_interface_wordlength;
 
+
 typedef enum {
-      hz48000 = 0,
-      hz8000 = 3,
-      hz32000 = 6,
-      hz96000 = 7
+      hz48000 = 0,  /* 48kHz from 12.288MHz MCLK */
+      hz8000 = 3,   /* 8kHz from 12.288MHz MCLK */
+      hz32000 = 6,  /* 32kHz from 12.288MHz MCLK */
+      hz96000 = 7,  /* 96kHz from 12.288MHz MCLK */
+      hz44100 = 8,  /* 44.1kHz from 11.2896MHz MCLK */
+      hz88200 = 15  /* 88.2kHz from 11.2896MHz MCLK */
     } WM8731_sampling_rate;    
+
 
 
 
